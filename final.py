@@ -21,6 +21,8 @@ mylist.append(cv2.imread("data/data/sit_up_hover.png"))
 mylist.append(cv2.imread("data/data/sit_up.png"))
 mylist.append(cv2.imread("data/data/squat_hover.png"))
 mylist.append(cv2.imread("data/data/squat.png"))
+for i in range(len(mylist)):
+    mylist[i] = cv2.resize(mylist[i], (128, 720)) # width = 128, height = 720
 
 excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
 
@@ -31,6 +33,23 @@ choice = int(input("請輸入想要做的運動: "))
 
 
 while True:
+<<<<<<< HEAD
+=======
+    while True:
+        ret, img = cap.read()
+        assert(img.shape == (720, 1280, 3))
+        img[0:720, 0:128] = mylist[0]
+        
+        cv2.imshow("Image", img)
+        cv2.waitKey(2)
+    # excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
+
+    # for idx, name in enumerate(excercise_option):
+    #     print(f"{idx+1}: {name}")
+
+    # choice = int(input("請輸入想要做的運動: "))
+
+>>>>>>> 9174a52ee31d3d08c2756eb887dbd522aed8dd6f
     point = 0
     flag = True
     record = max(record, point)
