@@ -12,44 +12,87 @@ record = 0
 
 # store file
 mylist = []
-mylist.append(cv2.imread("data/data/default.png"))
-mylist.append(cv2.imread("data/data/jump_hover.png"))
-mylist.append(cv2.imread("data/data/jump.png"))
-mylist.append(cv2.imread("data/data/push_up_hover.png"))
-mylist.append(cv2.imread("data/data/push_up.png"))
-mylist.append(cv2.imread("data/data/sit_up_hover.png"))
-mylist.append(cv2.imread("data/data/sit_up.png"))
-mylist.append(cv2.imread("data/data/squat_hover.png"))
-mylist.append(cv2.imread("data/data/squat.png"))
+mylist.append(cv2.imread("data/data/default.png")) # 0
+mylist.append(cv2.imread("data/data/jump_hover.png")) # 1
+mylist.append(cv2.imread("data/data/jump.png")) # 2
+mylist.append(cv2.imread("data/data/push_up_hover.png")) # 3
+mylist.append(cv2.imread("data/data/push_up.png")) # 4
+mylist.append(cv2.imread("data/data/sit_up_hover.png")) # 5
+mylist.append(cv2.imread("data/data/sit_up.png")) # 6
+mylist.append(cv2.imread("data/data/squat_hover.png")) # 7
+mylist.append(cv2.imread("data/data/squat.png")) # 8
+
 for i in range(len(mylist)):
     mylist[i] = cv2.resize(mylist[i], (128, 720)) # width = 128, height = 720
 
-excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
 
-for idx, name in enumerate(excercise_option):
-    print(f"{idx+1}: {name}")
-
-choice = int(input("請輸入想要做的運動: "))
-
-
+idx = 0
+start_time = 0
+break_time = 0
 while True:
-<<<<<<< HEAD
-=======
     while True:
+        ctime = time.time()
+
         ret, img = cap.read()
+        img = cv2.flip(img, 1)
         assert(img.shape == (720, 1280, 3))
-        img[0:720, 0:128] = mylist[0]
+        img[0:720, 0:128] = mylist[idx]
         
+        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # 处理图像并获取姿态结果
+        result = excer.pose.process(rgb_img)
+
+        # 检测姿态并绘制结果
+        img = excer.detect_pose(img, result)
+        lmlist = excer.find_pose(img, result)
+
+        if len(lmlist) != 0:
+            right_index_x = lmlist[20][0]
+            right_index_y = lmlist[20][1]
+
+            # 判斷是否確定要選擇這個運動
+            if idx != 0 and int(ctime - start_time) == 2:
+                if break_time == 0:
+                    break_time = time.time()
+
+                if idx == 7:
+                    idx = 8
+                elif idx == 5:            
+                    idx = 6
+                elif idx == 1:
+                    idx = 2
+                elif idx == 3:
+                    idx = 4
+            
+            print(int(ctime - break_time))
+            if idx == 8 or idx == 6 or idx == 2 or idx == 4:
+                if int(ctime - break_time) == 2:
+                    break
+                
+            # 移動選擇運動類型
+            if right_index_x < 128:
+                if 3 - int(ctime - start_time) > 0:
+                    cv2.putText(img, str(3 - int(ctime - start_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                
+                if break_time == 0:
+                    if right_index_y < 120:
+                        idx = 7
+                    elif right_index_y < 320:
+                        idx = 5
+                    elif right_index_y < 465:
+                        idx = 1
+                    elif right_index_y < 595:
+                        idx = 3
+            else:
+                start_time = time.time()
+                idx = 0
+                break_time = 0
+
         cv2.imshow("Image", img)
         cv2.waitKey(2)
-    # excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
 
-    # for idx, name in enumerate(excercise_option):
-    #     print(f"{idx+1}: {name}")
 
-    # choice = int(input("請輸入想要做的運動: "))
-
->>>>>>> 9174a52ee31d3d08c2756eb887dbd522aed8dd6f
+    break # 先測試前面
     point = 0
     flag = True
     record = max(record, point)
