@@ -4,8 +4,8 @@ import excersice as ex
 
 # 使用 OpenCV 从摄像头捕捉视频
 cap = cv2.VideoCapture(0)
-cap.set(3, 800)
-cap.set(4, 800)
+cap.set(3, 1280)
+cap.set(4, 1280)
 
 excer = ex.pose()
 record = 0
@@ -22,20 +22,15 @@ mylist.append(cv2.imread("data/data/sit_up.png"))
 mylist.append(cv2.imread("data/data/squat_hover.png"))
 mylist.append(cv2.imread("data/data/squat.png"))
 
+excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
+
+for idx, name in enumerate(excercise_option):
+    print(f"{idx+1}: {name}")
+
+choice = int(input("請輸入想要做的運動: "))
+
+
 while True:
-    while True:
-        ret, img = cap.read()
-        img[0:100, 0:700] = mylist[0]
-        
-        cv2.imshow(img)
-        cv2.waitKey(2)
-    # excercise_option = ["jumpingJacks", "LiftFeet", "Squat"]
-
-    # for idx, name in enumerate(excercise_option):
-    #     print(f"{idx+1}: {name}")
-
-    # choice = int(input("請輸入想要做的運動: "))
-
     point = 0
     flag = True
     record = max(record, point)
