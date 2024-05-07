@@ -24,7 +24,7 @@ def load_GUI_list() -> list:
     mylist.append(cv2.imread("data/data/jump_hover.jpg")) # 1
     mylist.append(cv2.imread("data/data/jump.jpg")) # 2
     mylist.append(cv2.imread("data/data/LiftFeet_hover.jpg")) # 3
-    mylist.append(cv2.imread("data/data/LiftFeet_hover.jpg")) # 4
+    mylist.append(cv2.imread("data/data/LiftFeet.jpg")) # 4
     mylist.append(cv2.imread("data/data/sit_up_hover.jpg")) # 5
     mylist.append(cv2.imread("data/data/sit_up.jpg")) # 6
     mylist.append(cv2.imread("data/data/squat_hover.jpg")) # 7
