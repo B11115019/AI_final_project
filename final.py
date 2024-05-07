@@ -66,13 +66,14 @@ while True:
             
             print(int(ctime - break_time))
             if idx == 8 or idx == 6 or idx == 2 or idx == 4:
+                cv2.putText(img, str(2 - int(ctime - break_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 if int(ctime - break_time) == 2:
                     break
                 
             # 移動選擇運動類型
             if right_index_x < 128:
-                if 3 - int(ctime - start_time) > 0:
-                    cv2.putText(img, str(3 - int(ctime - start_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                if 2 - int(ctime - start_time) > 0:
+                    cv2.putText(img, str(2 - int(ctime - start_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 
                 if break_time == 0:
                     if right_index_y < 120:
