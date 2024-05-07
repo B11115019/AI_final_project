@@ -61,7 +61,6 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 elif idx == GUIIndex.LIFT_FEET_HOVER:
                     idx = GUIIndex.LIFT_FEET
             
-            print(int(ctime - break_time))
             if idx == GUIIndex.SQUAT or idx == GUIIndex.SIT_UP or idx == GUIIndex.JUMP or idx == GUIIndex.LIFT_FEET:
                 cv2.putText(img, str(2 - int(ctime - break_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 if int(ctime - break_time) == 2:
