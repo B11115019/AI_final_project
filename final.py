@@ -1,6 +1,7 @@
 import cv2
 import time
 import excersice as ex
+from exercise_enum import *
 
 # 使用 OpenCV 从摄像头捕捉视频
 cap = cv2.VideoCapture(0)
@@ -11,16 +12,7 @@ excer = ex.pose()
 record = 0
 
 # store file
-mylist = []
-mylist.append(cv2.imread("data/data/default.png")) # 0
-mylist.append(cv2.imread("data/data/jump_hover.png")) # 1
-mylist.append(cv2.imread("data/data/jump.png")) # 2
-mylist.append(cv2.imread("data/data/push_up_hover.png")) # 3
-mylist.append(cv2.imread("data/data/push_up.png")) # 4
-mylist.append(cv2.imread("data/data/sit_up_hover.png")) # 5
-mylist.append(cv2.imread("data/data/sit_up.png")) # 6
-mylist.append(cv2.imread("data/data/squat_hover.png")) # 7
-mylist.append(cv2.imread("data/data/squat.png")) # 8
+mylist = load_GUI_list()
 
 for i in range(len(mylist)):
     mylist[i] = cv2.resize(mylist[i], (128, 720)) # width = 128, height = 720
@@ -51,21 +43,21 @@ while True:
             right_index_y = lmlist[20][1]
 
             # 判斷是否確定要選擇這個運動
-            if idx != 0 and int(ctime - start_time) == 2:
+            if idx != GUIIndex.DEFAULT and int(ctime - start_time) == 2:
                 if break_time == 0:
                     break_time = time.time()
 
-                if idx == 7:
-                    idx = 8
-                elif idx == 5:            
-                    idx = 6
-                elif idx == 1:
-                    idx = 2
-                elif idx == 3:
-                    idx = 4
+                if idx == GUIIndex.SQUAT_HOVER:
+                    idx = GUIIndex.SQUAT
+                elif idx == GUIIndex.SIT_UP_HOVER:            
+                    idx = GUIIndex.SIT_UP
+                elif idx == GUIIndex.JUMP_HOVER:
+                    idx = GUIIndex.JUMP
+                elif idx == GUIIndex.LIFT_FEET_HOVER:
+                    idx = GUIIndex.LIFT_FEET
             
             print(int(ctime - break_time))
-            if idx == 8 or idx == 6 or idx == 2 or idx == 4:
+            if idx == GUIIndex.SQUAT or idx == GUIIndex.SIT_UP or idx == GUIIndex.JUMP or idx == GUIIndex.LIFT_FEET:
                 cv2.putText(img, str(2 - int(ctime - break_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 if int(ctime - break_time) == 2:
                     break
@@ -77,13 +69,13 @@ while True:
                 
                 if break_time == 0:
                     if right_index_y < 120:
-                        idx = 7
+                        idx = GUIIndex.SQUAT_HOVER
                     elif right_index_y < 320:
-                        idx = 5
+                        idx = GUIIndex.SIT_UP_HOVER
                     elif right_index_y < 465:
-                        idx = 1
+                        idx = GUIIndex.JUMP_HOVER
                     elif right_index_y < 595:
-                        idx = 3
+                        idx = GUIIndex.LIFT_FEET_HOVER
             else:
                 start_time = time.time()
                 idx = 0
