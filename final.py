@@ -18,16 +18,21 @@ for i in range(len(mylist)):
     mylist[i] = cv2.resize(mylist[i], (128, 720)) # width = 128, height = 720
 
 
-idx = 0
-start_time = 0
-break_time = 0
-while True:
+def select_exercise_with_cam() -> ExerciseChoise:
+    """
+    使用相機來選擇動作
+    """
+    idx = 0
+    start_time = 0
+    break_time = 0
+
     while True:
         ctime = time.time()
 
         ret, img = cap.read()
         img = cv2.flip(img, 1)
         assert(img.shape == (720, 1280, 3))
+        # set up GUI
         img[0:720, 0:128] = mylist[idx]
         
         rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -60,7 +65,14 @@ while True:
             if idx == GUIIndex.SQUAT or idx == GUIIndex.SIT_UP or idx == GUIIndex.JUMP or idx == GUIIndex.LIFT_FEET:
                 cv2.putText(img, str(2 - int(ctime - break_time)), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 if int(ctime - break_time) == 2:
-                    break
+                    if idx == GUIIndex.SQUAT:
+                        return ExerciseChoise.SQUAT
+                    elif idx == GUIIndex.SIT_UP:
+                        return ExerciseChoise.SIT_UP
+                    elif idx == GUIIndex.JUMP:
+                        return ExerciseChoise.JUMP
+                    else:
+                        return ExerciseChoise.LIFT_FEET
                 
             # 移動選擇運動類型
             if right_index_x < 128:
@@ -83,6 +95,12 @@ while True:
 
         cv2.imshow("Image", img)
         cv2.waitKey(2)
+pass # select_exercise_with_cam
+
+
+while True:
+    choice = select_exercise_with_cam()
+    print(choice)
 
 
     break # 先測試前面
