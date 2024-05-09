@@ -1,5 +1,7 @@
 import mediapipe as mp
+import numpy
 import cv2
+import numpy.typing
 
 class pose():
     def __init__(self):
@@ -68,6 +70,33 @@ class pose():
 
         if leftelbow < leftshoulder and rightelbow < rightshoulder and leftHand - rightHand < 15:
             if(flag == False):
+                point += 1
+                flag = True
+        else:
+            flag = False
+
+        return img, point, flag
+    
+    def sit_up(self, img, lmlist, point, flag):
+        # right
+        RShoulder = numpy.array(lmlist[12][0:2])
+        RHip = numpy.array(lmlist[24][0:2])
+        RKnee = numpy.array(lmlist[26][0:2])
+
+        # left
+        LShoulder = numpy.array(lmlist[11][0:2])
+        LHip = numpy.array(lmlist[23][0:2])
+        LKnee = numpy.array(lmlist[25][0:2])
+
+        def included_angle(v1: numpy.typing.ArrayLike, v2: numpy.typing.ArrayLike) -> float:
+            """
+            計算兩個向量v1和v2的夾角，回傳的是角度制
+            """
+            radian = (v1 @ v2) / numpy.linalg.norm(v1) / numpy.linalg.norm(v2)
+            return radian * 180 / numpy.pi
+        
+        if included_angle(RShoulder - RHip, RKnee - RHip) < 90 or included_angle(LShoulder - LHip, LKnee - LHip) < 90:
+            if flag == False:
                 point += 1
                 flag = True
         else:
