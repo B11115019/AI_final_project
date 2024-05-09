@@ -39,8 +39,7 @@ class pose():
                 flag = True
         else:
             flag = False
-        
-        cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
         return img, point, flag
 
     def LiftFeet(self, img, lmlist, point, flag):
@@ -56,8 +55,7 @@ class pose():
                 flag = True
         else:
             flag = False
-        
-        cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
         return img, point, flag
 
     def jumpingJacks(self, img, lmlist, point, flag):
@@ -75,5 +73,4 @@ class pose():
         else:
             flag = False
 
-        cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
         return img, point, flag
