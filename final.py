@@ -12,10 +12,10 @@ excer = ex.pose()
 record = 0
 
 # store file
-mylist = load_GUI_list()
+UIlist = load_GUI_list()
 
-for i in range(len(mylist)):
-    mylist[i] = cv2.resize(mylist[i], (128, 720)) # width = 128, height = 720
+for i in range(len(UIlist)):
+    UIlist[i] = cv2.resize(UIlist[i], (128, 720)) # width = 128, height = 720
 
 
 def capture_and_detect_pose():
@@ -57,10 +57,12 @@ def select_exercise_with_cam() -> ExerciseChoise:
 
         # 顯示倒數秒數
         if idx != GUIIndex.DEFAULT:
-            cv2.putText(img, str(2 - pass_time), (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+            cv2.rectangle(img, (150, 0), (200, 50), (0, 0, 0), cv2.FILLED)
+            cv2.putText(img, str(2 - pass_time), (165, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
 
         # set up GUI
-        img[0:720, 0:128] = mylist[idx]
+        img[0:720, 0:128] = UIlist[idx]
 
         cv2.imshow("Image", img)
         cv2.waitKey(2)
@@ -134,48 +136,68 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 return ExerciseChoise.LIFT_FEET
 pass # select_exercise_with_cam
 
+record = [0, 0, 0, 0]
+point = 0
 
+# main
 while True:
     choice = select_exercise_with_cam()
     print(choice)
+    
+    # 分數紀錄
+    record[choice] = max(record[choice], point)
+    print(record[choice])
 
-
-    break # 先測試前面
-    point = 0
+    # 變數
+    idx = 0
     flag = True
-    record = max(record, point)
-    start = time.time()
+
+    # 顯示倒數的字串
+    countDown = ["", "Five", "Four", "Three", "Two", "One"]
+
+    # 時間計數
+    count_start_time = time.time()
+    start_time = 0
 
     while True:
         ret, img = cap.read()
         if not ret:
             print("failed")
-        # img.resize(800, 800)
         img = cv2.flip(img,1)
 
-        # 将 BGR 帧转换为 RGB
+        # 将 BGR 轉為 RGB
         rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # 处理图像并获取姿态结果
+        # 楚里圖像並獲得姿態
         result = excer.pose.process(rgb_img)
 
-        # 检测姿态并绘制结果
+        # 檢測姿態並繪製
         img = excer.detect_pose(img, result)
         lmlist = excer.find_pose(img, result)
 
-        if len(lmlist) != 0:   
-            if choice == 1:
-                img, point, flag = excer.jumpingJacks(img, lmlist, point, flag)
-            elif choice == 2:
-                img, point, flag = excer.LiftFeet(img, lmlist, point, flag)
-            elif choice == 3:
-                img, point, flag = excer.Squat(img, lmlist, point, flag)
-
         ctime = time.time()
 
-        cv2.putText(img, "time: " + str(60 - int(ctime - start)) + "sec", (30, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-        # 显示处理后的视频帧
+        # 放置遊戲開始倒數畫面
+        if idx <= 5:
+            cv2.putText(img, countDown[idx], (300, 460), cv2.FONT_HERSHEY_TRIPLEX, 10, (129, 240, 240), 3)
+            if int(ctime - count_start_time) == idx:
+                idx += 1
+            start_time = time.time()
+        else:
+            if len(lmlist) != 0:   
+                if choice == ExerciseChoise.SQUAT:
+                    img, point, flag = excer.Squat(img, lmlist, point, flag)
+                elif choice == ExerciseChoise.JUMP:
+                    img, point, flag = excer.jumpingJacks(img, lmlist, point, flag)
+                elif choice == ExerciseChoise.LIFT_FEET:
+                    img, point, flag = excer.LiftFeet(img, lmlist, point, flag)
+
+            # 放置文字
+            cv2.putText(img, "time: " + str(60 - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+            cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
+        # 顯示結果img
         cv2.imshow("Image", img)
         cv2.waitKey(2)
 
-        if ctime - start > 10:
+        if ctime - start_time > 60:
             break
