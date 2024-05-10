@@ -149,6 +149,7 @@ while True:
     print(record[choice])
 
     # 變數
+    point = 0
     idx = 0
     flag = True
 
@@ -183,17 +184,20 @@ while True:
                 idx += 1
             start_time = time.time()
         else:
-            if len(lmlist) != 0:   
+            if len(lmlist) != 0:
                 if choice == ExerciseChoise.SQUAT:
                     img, point, flag = excer.Squat(img, lmlist, point, flag)
                 elif choice == ExerciseChoise.JUMP:
                     img, point, flag = excer.jumpingJacks(img, lmlist, point, flag)
                 elif choice == ExerciseChoise.LIFT_FEET:
                     img, point, flag = excer.LiftFeet(img, lmlist, point, flag)
+                elif choice == ExerciseChoise.SIT_UP:
+                    img, point, flag = excer.sit_up(img, lmlist, point, flag)
 
             # 放置文字
             cv2.putText(img, "time: " + str(60 - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
             cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+            cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
         # 顯示結果img
         cv2.imshow("Image", img)
