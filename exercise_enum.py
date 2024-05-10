@@ -35,7 +35,7 @@ class ExerciseChoise(enum.IntEnum):
     """
     定義可以選擇的運動
     """
-    JUMP = 1
-    LIFT_FEET = 2
-    SQUAT = 3
-    SIT_UP = 4
+    JUMP = 0
+    LIFT_FEET = 1
+    SQUAT = 2
+    SIT_UP = 3
