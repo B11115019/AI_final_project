@@ -68,7 +68,7 @@ class pose():
         leftshoulder = lmlist[11][1]
         rightshoulder = lmlist[12][1]
 
-        if leftelbow < leftshoulder and rightelbow < rightshoulder and leftHand - rightHand < 15:
+        if leftelbow < leftshoulder and rightelbow < rightshoulder and leftHand - rightHand < 20:
             if(flag == False):
                 point += 1
                 flag = True
