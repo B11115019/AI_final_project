@@ -1,15 +1,17 @@
 import cv2
 import time
+import numpy as np
 import excersice as ex
 from exercise_enum import *
 
+winWidth = 1280
+winHeight = 1280
 # 使用 OpenCV 从摄像头捕捉视频
 cap = cv2.VideoCapture(0)
-cap.set(3, 1280)
-cap.set(4, 1280)
+cap.set(3, winWidth)
+cap.set(4, winHeight)
 
 excer = ex.pose()
-record = 0
 
 # store file
 UIlist = load_GUI_list()
@@ -108,6 +110,13 @@ def select_exercise_with_cam() -> ExerciseChoise:
             start_time = ctime
             idx = GUIIndex.DEFAULT
             continue
+        
+
+        """
+        討論要不要加
+        """
+        # cv2.rectangle(img, (300, 0), (800, 50), (0, 0, 0), cv2.FILLED)
+        # cv2.putText(img, excercise_Type[idx], (350, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
         # 檢查有沒有過2秒
         if pass_time >= 2:
@@ -134,13 +143,29 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 idx = GUIIndex.LIFT_FEET
             elif idx == GUIIndex.LIFT_FEET:
                 return ExerciseChoise.LIFT_FEET
+        
 pass # select_exercise_with_cam
 
+"""
+全域變數
+"""
 record = [0, 0, 0, 0]
 point = 0
+border = -1000
+"""
+討論要不要加
+"""
+# excercise_Type = ["", "jumpingJacks", "", "LIFT_FEET", "", "SQUAT", "", "SIT_UP", ""]
 
 # main
 while True:
+    """
+    初始化
+    """
+    endGame = False
+    end_Animation_counter = 0
+    delta = 1000
+
     choice = select_exercise_with_cam()
     print(choice)
     
@@ -161,9 +186,11 @@ while True:
     start_time = 0
 
     while True:
-        ret, img = cap.read()
-        if not ret:
-            print("failed")
+        try:
+            ret, img = cap.read()
+        except cv2.error as e:
+            print("There was a problem with your camera")
+
         img = cv2.flip(img,1)
 
         # 将 BGR 轉為 RGB
@@ -177,31 +204,53 @@ while True:
 
         ctime = time.time()
 
-        # 放置遊戲開始倒數畫面
-        if idx <= 5:
-            cv2.putText(img, countDown[idx], (300, 460), cv2.FONT_HERSHEY_TRIPLEX, 10, (129, 240, 240), 3)
-            if int(ctime - count_start_time) == idx:
-                idx += 1
-            start_time = time.time()
-        else:
-            if len(lmlist) != 0:
-                if choice == ExerciseChoise.SQUAT:
-                    img, point, flag = excer.Squat(img, lmlist, point, flag)
-                elif choice == ExerciseChoise.JUMP:
-                    img, point, flag = excer.jumpingJacks(img, lmlist, point, flag)
-                elif choice == ExerciseChoise.LIFT_FEET:
-                    img, point, flag = excer.LiftFeet(img, lmlist, point, flag)
-                elif choice == ExerciseChoise.SIT_UP:
-                    img, point, flag = excer.sit_up(img, lmlist, point, flag)
+        if endGame == False:
+            # 放置遊戲開始倒數畫面
+            if idx <= 5:
+                cv2.putText(img, countDown[idx], (300, 460), cv2.FONT_HERSHEY_TRIPLEX, 10, (129, 240, 240), 3)
+                if int(ctime - count_start_time) == idx:
+                    idx += 1
+                start_time = time.time()
+            else:
+                if len(lmlist) != 0:
+                    if choice == ExerciseChoise.SQUAT:
+                        img, point, flag = excer.Squat(img, lmlist, point, flag)
+                    elif choice == ExerciseChoise.JUMP:
+                        img, point, flag = excer.jumpingJacks(img, lmlist, point, flag)
+                    elif choice == ExerciseChoise.LIFT_FEET:
+                        img, point, flag = excer.LiftFeet(img, lmlist, point, flag)
+                    elif choice == ExerciseChoise.SIT_UP:
+                        img, point, flag = excer.sit_up(img, lmlist, point, flag)
 
-            # 放置文字
-            cv2.putText(img, "time: " + str(60 - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-            cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-            cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                # 放置文字
+                cv2.putText(img, "time: " + str(60 - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                
+            if ctime - start_time > 10:
+                endGame = True
+                end_Animation_counter = time.time()
+        #顯示結果畫面
+        elif endGame == True:
+            ctime = time.time()
+
+            if int(ctime - end_Animation_counter) >= 0.01:
+                end_Animation_counter = ctime
+                delta -= 200
+            
+            if point > record[choice]:
+                cv2.putText(img, "Congratulation you break the record!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (39, 242, 198), 2)
+                cv2.putText(img, f"Record becomes {point} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
+            else:
+                cv2.putText(img, "You have to work harder!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (39, 242, 198), 2)
+                cv2.putText(img, f"Highest record is {point} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
+
 
         # 顯示結果img
         cv2.imshow("Image", img)
         cv2.waitKey(2)
 
-        if ctime - start_time > 60:
+        if delta <= border:
             break
+
+
