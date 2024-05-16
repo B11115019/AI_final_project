@@ -69,12 +69,11 @@ class pose():
         rightshoulder = lmlist[12][1]
 
         if leftelbow < leftshoulder and rightelbow < rightshoulder and leftHand - rightHand < 20:
-            if(flag == False):
+            if flag == False:
                 point += 1
                 flag = True
-        else:
+        elif leftelbow > leftshoulder and rightelbow > rightshoulder and leftHand - rightHand > 20:
             flag = False
-
         return img, point, flag
     
     def sit_up(self, img, lmlist, point, flag):
