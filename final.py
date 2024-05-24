@@ -3,6 +3,7 @@ import time
 import numpy as np
 import excersice as ex
 import party_popper
+import end_menu
 from exercise_enum import *
 
 winWidth = 1280
@@ -17,6 +18,7 @@ excer = ex.pose()
 # store file
 UIlist = load_GUI_list()
 END_GIF = party_popper.PartyPopper()
+END_MENU = end_menu.EndMenu()
 
 for i in range(len(UIlist)):
     UIlist[i] = cv2.resize(UIlist[i], (128, 720)) # width = 128, height = 720
@@ -146,6 +148,58 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 return ExerciseChoise.LIFT_FEET
 pass # select_exercise_with_cam
 
+def restart_or_not() -> bool:
+    """
+    進入選單來選擇要不要重新開始
+    ## Return
+    - restart - 若為true，代表要重新開始
+    """
+    start_time = time.time()
+    # 0 -> 沒選中, 1 -> 選中 restart, 2 -> 選中 quit
+    state = 0
+
+    while True:
+        pass_time = int(time.time() - start_time)
+        img, lmlist = capture_and_detect_pose()
+
+        hand_x = lmlist[20][0]
+        hand_y = lmlist[20][1]
+
+        # 顯示倒數秒數
+        if state != 0:
+            cv2.rectangle(img, (150, 0), (200, 50), (0, 0, 0), cv2.FILLED)
+            cv2.putText(img, str(4 - pass_time), (165, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
+        if state == 0:
+            END_MENU.put_init_img(img)
+        elif state == 1:
+            END_MENU.put_restart_img(img)
+        else:
+            END_MENU.put_quit_img(img)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(2)
+
+        #############################################
+        # State Transition
+        restart_timer = False
+        if hand_x < 128:
+            if hand_y < 360 and state != 1:
+                state, restart_timer = 1, True
+            elif hand_y > 360 and state != 2:
+                state, restart_timer = 2, True
+        else:
+            state, restart_timer = 0, True
+
+        if restart_timer:
+            start_time = time.time()
+            continue
+            
+        if pass_time >= 4: # 過4秒
+            return state == 1
+            
+pass # restart_or_not
+
 """
 全域變數
 """
@@ -255,5 +309,11 @@ while True:
 
         if delta <= border:
             break
+    pass # while loop for 遊戲中和結算畫面
+
+    if restart_or_not() == True:
+        continue
+    else:
+        break
 
 
