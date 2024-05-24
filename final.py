@@ -5,7 +5,7 @@ import excersice as ex
 from exercise_enum import *
 
 winWidth = 1280
-winHeight = 1280
+winHeight = 720
 # 使用 OpenCV 从摄像头捕捉视频
 cap = cv2.VideoCapture(0)
 cap.set(3, winWidth)
@@ -29,7 +29,6 @@ def capture_and_detect_pose():
     """
     ret, img = cap.read()
     img = cv2.flip(img, 1)
-    assert(img.shape == (720, 1280, 3))
 
     rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     # 处理图像并获取姿态结果
