@@ -2,6 +2,7 @@ import cv2
 import time
 import numpy as np
 import excersice as ex
+import party_popper
 from exercise_enum import *
 
 winWidth = 1280
@@ -15,6 +16,7 @@ excer = ex.pose()
 
 # store file
 UIlist = load_GUI_list()
+END_GIF = party_popper.PartyPopper()
 
 for i in range(len(UIlist)):
     UIlist[i] = cv2.resize(UIlist[i], (128, 720)) # width = 128, height = 720
@@ -142,7 +144,6 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 idx = GUIIndex.LIFT_FEET
             elif idx == GUIIndex.LIFT_FEET:
                 return ExerciseChoise.LIFT_FEET
-        
 pass # select_exercise_with_cam
 
 """
@@ -236,7 +237,10 @@ while True:
             if int(ctime - end_Animation_counter) >= 0.01:
                 end_Animation_counter = ctime
                 delta -= 200
-            
+                
+            END_GIF.next_frame()
+            END_GIF.put_on_image(img)
+
             if point > record[choice]:
                 cv2.putText(img, "Congratulation you break the record!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (39, 242, 198), 2)
                 cv2.putText(img, f"Record becomes {point} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
