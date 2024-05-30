@@ -5,6 +5,7 @@ import excersice as ex
 import party_popper
 import end_menu
 from exercise_enum import *
+import gaming_sound
 
 winWidth = 1280
 winHeight = 720
@@ -52,6 +53,7 @@ def select_exercise_with_cam() -> ExerciseChoise:
     idx = 0
     start_time = time.time()
 
+    gaming_sound.MainMenu()
     while True:
         # 目前的時間
         ctime = time.time()
@@ -89,24 +91,28 @@ def select_exercise_with_cam() -> ExerciseChoise:
                 if idx != GUIIndex.SQUAT_HOVER and idx != GUIIndex.SQUAT:
                     start_time = ctime
                     idx = GUIIndex.SQUAT_HOVER
+                    gaming_sound.PressButton()
                     continue
             elif right_index_y < 320:
                 # 從其他動作改選 SIT_UP
                 if idx != GUIIndex.SIT_UP_HOVER and idx != GUIIndex.SIT_UP:
                     start_time = ctime
                     idx = GUIIndex.SIT_UP_HOVER
+                    gaming_sound.PressButton()
                     continue
             elif right_index_y < 465:
                 # 從其他動作改選 JUMP
                 if idx != GUIIndex.JUMP_HOVER and idx != GUIIndex.JUMP:
                     start_time = ctime
                     idx = GUIIndex.JUMP_HOVER
+                    gaming_sound.PressButton()
                     continue
             elif right_index_y < 595:
                 # 從其他動作改選 LIFT_FEET
                 if idx != GUIIndex.LIFT_FEET_HOVER and idx != GUIIndex.LIFT_FEET:
                     start_time = ctime
                     idx = GUIIndex.LIFT_FEET_HOVER
+                    gaming_sound.PressButton()
                     continue
         else:
             # 沒有選中任何動作
@@ -124,24 +130,28 @@ def select_exercise_with_cam() -> ExerciseChoise:
         # 檢查有沒有過2秒
         if pass_time >= 2:
             if idx == GUIIndex.SQUAT_HOVER:
+                gaming_sound.PressConfirm()
                 start_time = ctime
                 idx = GUIIndex.SQUAT
             elif idx == GUIIndex.SQUAT:
                 return ExerciseChoise.SQUAT
 
             elif idx == GUIIndex.SIT_UP_HOVER:
+                gaming_sound.PressConfirm()
                 start_time = ctime
                 idx = GUIIndex.SIT_UP
             elif idx == GUIIndex.SIT_UP:
                 return ExerciseChoise.SIT_UP
 
             elif idx == GUIIndex.JUMP_HOVER:
+                gaming_sound.PressConfirm()
                 start_time = ctime
                 idx = GUIIndex.JUMP
             elif idx == GUIIndex.JUMP:
                 return ExerciseChoise.JUMP
             
             elif idx == GUIIndex.LIFT_FEET_HOVER:
+                gaming_sound.PressConfirm()
                 start_time = ctime
                 idx = GUIIndex.LIFT_FEET
             elif idx == GUIIndex.LIFT_FEET:
@@ -192,10 +202,12 @@ def restart_or_not() -> bool:
             state, restart_timer = 0, True
 
         if restart_timer:
+            if state != 0: gaming_sound.PressButton()
             start_time = time.time()
             continue
             
         if pass_time >= 4: # 過4秒
+            gaming_sound.PressConfirm()
             return state == 1
             
 pass # restart_or_not
@@ -261,10 +273,14 @@ while True:
         if endGame == False:
             # 放置遊戲開始倒數畫面
             if idx <= 5:
+                if idx == 0: gaming_sound.CountDown()
+
                 cv2.putText(img, countDown[idx], (300, 460), cv2.FONT_HERSHEY_TRIPLEX, 10, (129, 240, 240), 3)
                 if int(ctime - count_start_time) == idx:
                     idx += 1
                 start_time = time.time()
+
+                if idx == 6: gaming_sound.Gaming()
             else:
                 if len(lmlist) != 0:
                     if choice == ExerciseChoise.SQUAT:
@@ -281,9 +297,9 @@ while True:
                 cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 
-            if ctime - start_time > 10:
-                endGame = True
-                end_Animation_counter = time.time()
+                if ctime - start_time > 10:
+                    endGame = True
+                    end_Animation_counter = time.time()
         #顯示結果畫面
         elif endGame == True:
             ctime = time.time()
@@ -315,5 +331,3 @@ while True:
         continue
     else:
         break
-
-
