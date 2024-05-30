@@ -214,7 +214,7 @@ pass # restart_or_not
 
 """
 全域變數
-"""
+""" 
 record = [0, 0, 0, 0]
 point = 0
 border = -1000
@@ -297,7 +297,7 @@ while True:
                 cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 
-                if ctime - start_time > 10:
+                if ctime - start_time > 60:
                     endGame = True
                     end_Animation_counter = time.time()
                     if point > record[choice]:
