@@ -17,3 +17,9 @@ def CountDown():
 
 def Gaming():
     winsound.PlaySound("data/gamingSound.wav", winsound.SND_ASYNC | winsound.SND_FILENAME | winsound.SND_LOOP)
+
+def BreakRecord():
+    winsound.PlaySound("data/breakRecord.wav", winsound.SND_ASYNC | winsound.SND_FILENAME)
+
+def Loss():
+    winsound.PlaySound("data/loss.wav", winsound.SND_ASYNC | winsound.SND_FILENAME)

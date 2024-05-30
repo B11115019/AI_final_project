@@ -300,6 +300,10 @@ while True:
                 if ctime - start_time > 10:
                     endGame = True
                     end_Animation_counter = time.time()
+                    if point > record[choice]:
+                        gaming_sound.BreakRecord()
+                    else:
+                        gaming_sound.Loss()
         #顯示結果畫面
         elif endGame == True:
             ctime = time.time()
