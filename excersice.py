@@ -32,10 +32,10 @@ class pose():
         return lmlist
 
     def Squat(self, img, lmlist, point, flag):
-        pos1 = lmlist[11][1]
-        pos2 = lmlist[25][1]
+        pos1 = lmlist[24][1]
+        pos2 = lmlist[26][1]
 
-        if abs(pos1 - pos2) < 200:
+        if abs(pos1 - pos2) < 100:
             if(flag == False):
                 point += 1
                 flag = True
@@ -51,7 +51,7 @@ class pose():
         rightKnee = lmlist[26][1]
 
         # if 
-        if rightHip - rightKnee > 10 or leftHip - leftKnee > 10:
+        if rightHip - rightKnee > 20 or leftHip - leftKnee > 20:
             if(flag == False):
                 point += 1
                 flag = True

@@ -18,8 +18,10 @@ excer = ex.pose()
 
 # store file
 UIlist = load_GUI_list()
-END_GIF = party_popper.PartyPopper()
+# END_GIF = party_popper.PartyPopper()
 END_MENU = end_menu.EndMenu()
+
+TIME = 30
 
 for i in range(len(UIlist)):
     UIlist[i] = cv2.resize(UIlist[i], (128, 720)) # width = 128, height = 720
@@ -218,10 +220,6 @@ pass # restart_or_not
 record = [0, 0, 0, 0]
 point = 0
 border = -1000
-"""
-討論要不要加
-"""
-# excercise_Type = ["", "jumpingJacks", "", "LIFT_FEET", "", "SQUAT", "", "SIT_UP", ""]
 
 # main
 while True:
@@ -239,7 +237,7 @@ while True:
     record[choice] = max(record[choice], point)
     print(record[choice])
 
-    # 變數
+    # 初始化變數
     point = 0
     idx = 0
     flag = True
@@ -293,11 +291,11 @@ while True:
                         img, point, flag = excer.sit_up(img, lmlist, point, flag)
 
                 # 放置文字
-                cv2.putText(img, "time: " + str(60 - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                cv2.putText(img, "time: " + str(TIME - int(ctime - start_time)) + "sec", (30, 700), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 cv2.putText(img, "point = " + str(point), (30,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 cv2.putText(img, f"Highest record = {record[choice]}", (900, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 
-                if ctime - start_time > 60:
+                if ctime - start_time > TIME:
                     endGame = True
                     end_Animation_counter = time.time()
                     if point > record[choice]:
@@ -312,15 +310,15 @@ while True:
                 end_Animation_counter = ctime
                 delta -= 200
                 
-            END_GIF.next_frame()
-            END_GIF.put_on_image(img)
+            # END_GIF.next_frame()
+            # END_GIF.put_on_image(img)
 
             if point > record[choice]:
-                cv2.putText(img, "Congratulation you break the record!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (39, 242, 198), 2)
+                cv2.putText(img, "Congratulation you break the record!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (240, 86, 10), 2)
                 cv2.putText(img, f"Record becomes {point} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
             else:
-                cv2.putText(img, "You have to work harder!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (39, 242, 198), 2)
-                cv2.putText(img, f"Highest record is {point} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
+                cv2.putText(img, "You have to work harder!!", (delta, 400), cv2.FONT_HERSHEY_TRIPLEX, 3, (240, 86, 10), 2)
+                cv2.putText(img, f"Highest record is {record[choice]} points", (150, 600), cv2.FONT_HERSHEY_TRIPLEX, 2, (235, 19, 227), 2)
 
 
         # 顯示結果img
